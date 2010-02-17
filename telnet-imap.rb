@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 # Copyright 2008 the original author or authors.
 # 
 # http://www.gnu.org/licenses/gpl.txt
@@ -79,7 +80,7 @@ class ExchangeCleaner
 	def send_command command
 		text = ''
 		begin
-			@client.cmd( { "String" => command, "Match" => /^.* OK.*completed/ } ) { |c| @log.debug(c.chomp) ; text << c }
+			@client.cmd( { "String" => command, "Match" => /(^\W* OK.*completed.*$|^\W* NO.*$)/ } ) { |c| @log.debug(c.chomp) ; text << c }
 		rescue Exception=>e
 		end
 		text
