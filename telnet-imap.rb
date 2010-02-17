@@ -55,7 +55,7 @@ class ExchangeCleaner
 				@log.debug("#{box}-message-#{i}-rfc-compatible?-#{compatible}")				
 				if !compatible
 					if dry_run.eql?('y')
-						puts "I could have deleted this message you chicken"						
+						puts "I could have deleted message #{i} from #{box} you chicken"						
 					else
 						delete_message box,i	
 					end	
@@ -72,14 +72,14 @@ class ExchangeCleaner
 	
 	def is_rfc_822_compatible? box,message_number
 		@log.debug("Checking#{box}, #{message_number}")
-		text = send_command "? FETCH #{message_number} rfc822.text"
+		text = send_command "? FETCH #{message_number} rfc822.size"
 		!text.include? 'NO The requested message could not be converted to an RFC-822 compatible format'
 	end
 
 	def send_command command
 		text = ''
 		begin
-			@client.cmd(command) { |c| @log.debug(c.chomp) ; text << c }
+			@client.cmd( { "String" => command, "Match" => /^.* OK.*completed/ } ) { |c| @log.debug(c.chomp) ; text << c }
 		rescue Exception=>e
 		end
 		text
